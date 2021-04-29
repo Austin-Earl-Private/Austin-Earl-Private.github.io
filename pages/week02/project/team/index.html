@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Activity Week 2</title>
+</head>
+<body>
+    <input type="text" />
+    <button onclick="displayInput()">Display</button>
+    <button onclick="displaySum()">Sum</button>
+    <br />
+    <input type="number" />
+    <button onclick="addAndDisplay(addNumbers)">&nbsp;+&nbsp;</button>
+    <button onclick="addAndDisplay(multiplyNumbers)">&nbsp;x&nbsp;</button>
+    <button onclick="addAndDisplay(subtractNumbers)">&nbsp;-&nbsp;</button>
+    <button onclick="addAndDisplay(divideNumbers)">&nbsp;/&nbsp;</button>
+
+    <div id="output"></div>
+
+    <script>
+        function displayInput() {
+            const input = document.querySelector("input");
+            document.querySelector("#output").innerText = input.value;
+        }
+
+        function displaySum() {
+            const input = document.querySelector("input");
+            const number = parseInt(input.value) || 0;
+            document.querySelector("#output").innerText = sumNumbers(number);
+        }
+
+        /**
+         * @param {Function} oper
+         */
+        function addAndDisplay(oper) {
+            const inputs = document.querySelectorAll("input");
+            const n1 = parseInt(inputs[0].value) || 0;
+            const n2 = parseInt(inputs[1].value) || 0;
+            const sum = oper(n1, n2);
+            document.querySelector("#output").innerText = sum;
+        }
+
+        /**
+         * @param {Number} number
+         */
+        function sumNumbers(number) {
+            let sum = 0;
+            for (let i = 1; i <= number; i++) {
+                sum += i;
+            }
+            return sum;
+        }
+
+        /**
+         * Add two numbers.
+         * @param {Number} n1
+         * @param {Number} n2
+         */
+        function addNumbers(n1, n2) {
+            let sum = n1 + n2;
+            return sum;
+        }
+
+        /**
+         * Multiply two numbers.
+         * @param {Number} n1
+         * @param {Number} n2
+         */
+        function multiplyNumbers(n1, n2) {
+            let sum = n1 * n2;
+            return sum;
+        }
+
+        /**
+         * Subtract two numbers.
+         * @param {Number} n1
+         * @param {Number} n2
+         */
+         function subtractNumbers(n1, n2) {
+            let sum = n1 - n2;
+            return sum;
+        }
+
+        /**
+         * Divide two numbers.
+         * @param {Number} n1
+         * @param {Number} n2
+         */
+         function divideNumbers(n1, n2) {
+            let sum = n1 / n2;
+            return sum;
+        }
+    </script>
+
+</body>
+</html>
