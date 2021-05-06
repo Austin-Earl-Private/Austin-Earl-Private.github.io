@@ -2,7 +2,7 @@ body {
     font-family:Verdana, Geneva, Tahoma, sans-serif
 }
 
-#custom-list {
+.custom-list {
     display: flex;
     flex-direction: column;
 }

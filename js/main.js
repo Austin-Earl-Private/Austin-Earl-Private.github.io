@@ -6,11 +6,15 @@ const links =[
     {
         label: "Week 02 Notes",
         url: "pages/week02/week2.html"
+    },
+    {
+        label: "Week 03 Notes",
+        url: "pages/week03/week3.html"
     }
 ]
 
 function getLinks(){
-    var list = document.getElementById("custom-list");
+    var list = document.getElementsByClassName("custom-list")[0];
     links.forEach(element => {
         var listItem = document.createElement('a');
         listItem.href = element.url;
