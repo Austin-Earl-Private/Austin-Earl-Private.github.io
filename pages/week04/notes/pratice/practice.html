@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WDD 330 portfolio</title>
+    <link rel="stylesheet" href="../../../../css/styles.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h2>Notes</h2>
+    <p>A little OOP with classes, and forms and events... Only thing is that I would like to get better at css cause I suck at it and other classes didn't teach it very well... :( </p>
+    <p>Testing things here!</p>
+    <form name='search' action='/search'>
+        <input name='searchInput'>
+        <button type='submit'>Search</button>
+    </form>
+    <button onclick="attachFocus()">Attach Focus</button>
+    <button onclick="attachBlur()">Attach Blur</button>
+    <button onclick="attachChange()">Attach Change</button>
+    <hr>
+    <h2>Hero Thinga ma bob</h2>
+    <div>
+        <form id='hero'>
+            <label for='heroName'>Name:
+                
+            </label>
+            <input type='text' id='heroName' name='heroName' autofocus placeholder='Your Super Hero Name' maxlength=32>
+            <label for="heroDescription">Description:
+                
+            </label>
+            <textarea name="heroDescription" id="heroDescription" cols="30" rows="10"></textarea>
+            <p>Super Powers:</p>
+            <label for='flight'>Flight:
+                <input type='checkbox' id='flight' value='Flight' name='powers'>
+            </label>
+            <label for='strength'>Super Strength:
+                <input type='checkbox' id='strength' value='Strength' name='powers'>
+            </label>
+            <label for='speed'>Super Speed:
+                <input type='checkbox' id='speed' value='Super Speed' name='powers'>
+            </label>
+            <label for='energy'>Energy Blasts:
+                <input type='checkbox' id='energy' value='Energy Blasts' name='powers'>
+                </label>
+            <label for='telekinesis'>Telekinesis:
+                <input type='checkbox' id='telekinesis' value='Telekinesis' name='powers'>
+            </label>
+
+            <button type='submit'>Submit</button>
+        </form>
+    </div>
+<script src='work.js'></script>
+</body>
+
+</html>
