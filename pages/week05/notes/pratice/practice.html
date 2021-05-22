@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WDD 330 portfolio</title>
+    <link rel="stylesheet" href="../../../../css/styles.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h2>Notes</h2>
+    <p>Warning this in debug is a lag machine! You might have to kill this page if you realy want to run it!</p>
+    <p>Open task manager cause it will save you!</p>
+    <p>Click on a square to make the colors "bleed" to other squares!</p>
+    <p>This is not optimized.</p>
+
+    <section>
+        <p style="color: tomato;">Enable or disable rendering of colors</p>
+        <button id= "stop"onclick="stopColoring();">STOP</button>
+        
+    </section>
+    <br>
+    <button onclick="loging.enableBreakPoints(true)">Enable break points</button>
+    <button onclick="loging.enableBreakPoints(false)">Disable break points</button>
+
+    <button onclick="loging.enableDebug(true)">Enable Debug (CAN BE LAGGY!)</button>
+    <button onclick="loging.enableDebug(false)">Disable Debug</button>
+
+    <button onclick="loging.enableProd(true)">Enable Production</button>
+    <button onclick="loging.enableProd(false)">Disable Production</button>
+
+    <p>Enter any valid css color here!</p>
+    <input type="text" name="color" id="colorChange" placeholder="black">
+    <button onclick="setColor();">APPLY</button>
+    <br>
+    <div class="grid">
+
+    </div>
+
+
+<script src='work.js'></script>
+</body>
+
+</html>
