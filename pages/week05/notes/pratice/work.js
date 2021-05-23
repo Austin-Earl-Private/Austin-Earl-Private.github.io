@@ -34,14 +34,24 @@ class logger {
         }
     }
 
+    getStats(){
+        return document.getElementById("stats").textContent = "BreakPoints: "+this._breakPoint+" Debug: "+this._debug+" Prod: "+this._prod;
+    }
     enableBreakPoints(boolean){
+        
         this._breakPoint = boolean;
+        this.getStats()
     }
     enableDebug(boolean){
+
         this._debug = boolean;
+        this.getStats()
+
     }
     enableProd(boolean){
         this._prod = boolean;
+        this.getStats()
+
     }
 }
 
@@ -56,7 +66,7 @@ numb_rows = 30
 numb_columns = 30
 stop_coloring =false
 let color = "black";
-
+loging.getStats();
 function setColor() {
     color = document.getElementById("colorChange").value;
     loging.i("color change to "+color)
@@ -84,6 +94,7 @@ function createGrid(){
 
 function changeColor(event){
     target = event.target
+    loging.i("Clicked starting propergations.")
     loging.d(event)
     loging.d(target)
     loging.d(event.type)

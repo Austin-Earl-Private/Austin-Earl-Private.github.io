@@ -15,5 +15,5 @@ printTuple(tuple1)
 tuple2 = ("two", True, (2, 2 + 2j))
 # Print Tuple2 out
 printTuple(tuple2)
-Oh Look at that I can write remote!!!!!!!! thats so cool!!!!
+
         
