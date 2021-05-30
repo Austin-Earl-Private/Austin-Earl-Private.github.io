@@ -4,7 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Austin's Webpage</title>
-        <script src="./js/main.js"></script>
         <link rel="stylesheet" href="./css/styles.css">
     </head>
     <body onload="getLinks()">
@@ -13,5 +12,11 @@
         <ul class="custom-list">
 
         </ul>
+        <h2>Current Project: </h2>
+        <a id="current-project"></a>
+        <p id="current-project-desciption"></p>
+        <!-- Load project js after dom renders everything else -->
+        <script src="./js/main.js"></script>
+
     </body>
 </html>

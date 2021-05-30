@@ -1,0 +1,131 @@
+nav {
+    background-color: rgb(80, 80, 80);
+    border-radius: 25px 25px 25px 0px;
+    margin-bottom: 0px;
+    
+}
+
+nav h1 a {
+    color: rgb(238, 238, 238);
+    text-decoration: none;
+    /* padding: 5px; */
+
+}
+nav h1 {
+    padding: 0.3rem;
+    margin-left: 10px;
+    margin-bottom: 0px;
+
+}
+
+html {
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+}
+
+#main-content{
+    margin-left: 1rem;
+}
+
+
+#side-bar {
+    background-color: rgb(151, 151, 151);
+    border-radius: 0px 0px 25px 25px;
+    width: 15rem;
+    padding-top: 0px;
+
+    /* padding: 0.2rem; */
+}
+
+#side-bar ul {
+    list-style-type: none;
+    padding: 1rem;
+    margin-top: 0px;
+
+}
+
+#side-bar ul li {
+    
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: row;
+
+}
+
+#side-bar ul li p {
+    
+    padding: 0px;
+    margin: 0px;
+
+}
+
+#side-bar ul a{
+    color: rgb(214, 214, 214);
+    text-decoration: none;
+}
+
+
+
+#side-bar ul li i  {
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.7rem;
+    margin-bottom: 0.0rem;
+    margin-right: 0px;
+
+}
+#side-bar ul a:hover {
+    
+    color:rgb(0, 0, 0)
+
+}
+#side-bar ul li:hover {
+    
+    background-color: #c2c2c2;
+
+}
+
+
+
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    width: 3px;
+    height: 3px;
+  }
+  
+  .right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  
+  .left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+  }
+  
+  .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
+  
+  .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+  .badArrow{
+    border: solid rgb(199, 0, 0);
+    border-width: 0 3px 3px 0;
+
+}
+.goodArrow{
+    border: solid rgb(0, 133, 0);
+    border-width: 0 3px 3px 0;
+
+}
