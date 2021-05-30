@@ -1,8 +1,37 @@
 body {
     font-family:Verdana, Geneva, Tahoma, sans-serif
 }
+nav {
+    padding: 0.6rem;
+    background-color: rgb(46, 46, 46);
+    
+}
+nav h1 {
+    color: rgb(219, 219, 219);
+}
+.content{
+    display: flex;
+    flex-direction: row;
+}
 
 .custom-list {
     display: flex;
     flex-direction: column;
+}
+
+.custom-list ul a {
+    margin: auto;
+
+}
+
+#side-bar {
+    width: 20rem;
+    background-color: rgb(204, 204, 204);
+}
+
+#side-bar h2{
+    padding: 1rem;
+}
+#main {
+    margin-left: 1rem;
 }

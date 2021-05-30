@@ -7,14 +7,27 @@
         <link rel="stylesheet" href="./css/styles.css">
     </head>
     <body onload="getLinks()">
-        <h1>Austin's Webpage</h1>
-        <p>This is where I have all my links! Have fun with them!</p>
-        <ul class="custom-list">
-
-        </ul>
-        <h2>Current Project: </h2>
-        <a id="current-project"></a>
-        <p id="current-project-desciption"></p>
+        <nav>
+            <h1>Austin's Webpage</h1>
+        </nav>
+        <div class="content">
+            <section id="side-bar">
+                <h2>Notes</h2>
+                <ul class="custom-list"></ul>
+            </section>
+            <section id="main">
+                <h2>Main page: </h2>
+                <p>This is where I have all my links! Have fun with them!</p>
+                <ul class="custom-list">
+        
+                </ul>
+                <h2>Current Project: </h2>
+                <a id="current-project"></a>
+                <p id="current-project-desciption"></p>
+            </section>
+        </div>
+        
+        
         <!-- Load project js after dom renders everything else -->
         <script src="./js/main.js"></script>
 

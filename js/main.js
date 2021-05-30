@@ -25,9 +25,11 @@ const current_project = {name:"Crypto Data viewer!",link:"./pages/project01/inde
 function getLinks(){
     var list = document.getElementsByClassName("custom-list")[0];
     links.forEach(element => {
-        var listItem = document.createElement('a');
-        listItem.href = element.url;
-        listItem.innerText = element.label;
+        var listItem = document.createElement('li');
+        var link = document.createElement('a');
+        link.href = element.url;
+        link.innerText = element.label;
+        listItem.appendChild(link)
         list.appendChild(listItem);
     });
 }
