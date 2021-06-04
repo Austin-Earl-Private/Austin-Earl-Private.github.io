@@ -3,7 +3,7 @@ import ls from "./localStorageHelper.js";
  * @type {Array}
  */
  let todos = new ls().loadTodoList();//[{id:"test",content:"lalala",completed:false},{id:"test2",content:"lalala2",completed:false}];
-
+console.log(todos);
 
 
 console.log("starting")

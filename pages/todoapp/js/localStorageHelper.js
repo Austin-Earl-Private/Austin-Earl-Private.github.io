@@ -4,6 +4,10 @@ export default class localStorageHelper{
     }
     
      loadTodoList(){
-        return JSON.parse(window.localStorage.getItem("todo"))
+        let ele = JSON.parse(window.localStorage.getItem("todo"))
+        if(!ele){
+            ele = [];
+        }
+        return ele;
     }
 }
