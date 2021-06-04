@@ -1,0 +1,67 @@
+nav {
+    background-color: rgb(80, 80, 80);
+    border-radius: 25px 25px 0px 0px;
+    margin-bottom: 0px;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+
+    
+}
+
+nav h1 a {
+    color: rgb(238, 238, 238);
+    text-decoration: none;
+    /* padding: 5px; */
+    
+
+}
+nav h1 {
+    padding: 0.3rem;
+    margin-left: 10px;
+    margin-bottom: 0px;
+
+}
+
+
+html {
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.main {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.todo-item{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    border-style: solid;
+}
+
+.todo-item-content{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.todo-item-completed{
+    text-decoration: line-through;
+}
+
+#list-filter{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-style: solid;
+    padding: 5px;
+}
+
+#input{
+    margin: 10px;
+}
+
