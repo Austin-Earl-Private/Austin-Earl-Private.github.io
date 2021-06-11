@@ -1,0 +1,12 @@
+.myCanvas {
+    border: dotted 2px black;
+}
+.graph {
+    display: flex;
+    overflow: auto;
+    /* padding: 0px;
+    margin: 0px; */
+    /* margin: 10px; */
+    border: dotted 1px red;
+    height: 200px;
+}

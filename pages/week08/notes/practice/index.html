@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Canvas graph prototype</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles.css" />
+    <meta name="description" content="prototype of canvas graphs" />
+  </head>
+
+  <body>
+    <main>
+      <h2>Canvas rendered line chart </h2>
+      <p>This is a pure canvas rendered line chart. Its still a work in progress, though I'm starting to get a hang of it's quarks.</p>
+      <p>A few things to add to it...<br>
+         Mouse hover over dots to see values<br>
+         Lines and numbers rendered on the sides
+      </p>
+      <p>Have fun and play arround with it. Its not hardened so it might error out till I fix the bugs. -_-</p>
+      <div class="graph">
+        <canvas id="myCanvas" class="myCanvas"  >
+          Sorry! Your browser doesn’t support Canvas.
+      </canvas>
+      </div>
+      <button id="recalulate">recalulate</button>
+      <input type="number" name="size" id="size" placeholder="Height of the graph">
+      <input type="text" name="numbers" id="numbers" placeholder="-10,50,30,20,-9">
+      <p>Type in the hight to set the height in px of the graph it defaults to 200</p>
+      <p>Note there is buffer space of 20 px on each side... so anything less than 40 will be fliped and squished.</p>
+      <p>Type in numbers separated by commas to change the points on the graph it defaults to -10,50,30,20,-9</p>
+    </main>
+    <script src="./test.js" type="module"></script>
+  </body>
+</html>
