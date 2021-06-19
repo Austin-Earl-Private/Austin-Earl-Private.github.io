@@ -24,6 +24,10 @@ export default class Graph {
         this.info_box.text_color = "black"
         this.info_box.textAlign = "center"
         this.info_box.fontStyle = "bold 20px  Verdana "
+        this.info_box.render = false;
+        this.info_box.mouse_x = 0;
+        this.info_box.mouse_y = 0;
+        this.info_box.point = new Point(0, 0);
 
         this.pointStyle = {}
         this.pointStyle.background_color = "#02aaec"
@@ -38,6 +42,8 @@ export default class Graph {
 
         this.pointPosition = {}
         this.pointPosition.x_spacing = 20;
+
+
     };
 
     /**
@@ -175,8 +181,15 @@ export default class Graph {
 
         context.stroke();
     }
-
-    drawCircle(point, size, relative_mouse_x, relative_mouse_y) {
+    /**
+     * 
+     * @param {Point} point 
+     * @param {Number} size 
+     * @param {Number} relative_mouse_x 
+     * @param {Number} relative_mouse_y 
+     * @param {CanvasRenderingContext2D} context 
+     */
+    drawCircle(point, size, relative_mouse_x, relative_mouse_y, context) {
 
 
 
@@ -185,7 +198,7 @@ export default class Graph {
 
         let point_calc = graph_render_hight - (graph_render_hight * point_percent) + this.padding_y;
 
-        var context = this.canvas.getContext("2d");
+        // var context = this.canvas.getContext("2d");
 
 
 
@@ -194,29 +207,17 @@ export default class Graph {
         context.arc(point.x, point_calc, size, 0, Math.PI * 2, true);
         context.closePath();
         if (context.isPointInPath(relative_mouse_x, relative_mouse_y)) {
+            // context.globalCompositeOperation = "destination-over";
             context.beginPath();
             context.arc(point.x, point_calc, size + size * this.pointStyle.pointGrowthMultiplyer, 0, Math.PI * 2, true);
             context.closePath();
-
-            let render_x = relative_mouse_x;
-            let render_y = relative_mouse_y;
-
-            if (render_y - 25 - this.padding_y < 0) {
-                render_y += 40 + 15
-            }
+            this.info_box.render = true;
+            this.info_box.mouse_x = relative_mouse_x;
+            this.info_box.mouse_y = relative_mouse_y;
+            this.info_box.point = point;
 
 
-            context.font = this.info_box.fontStyle
-            context.textAlign = this.info_box.textAlign
-            context.fillStyle = this.info_box.background_color
-            console.log(render_x, render_y, this.padding_y)
-            let text_width = context.measureText(point.y)
-            console.log("box left ", render_x - (text_width.width / 2))
-            context.fillRect(render_x - (text_width.width / 2) - 5, render_y - 15 - 25, text_width.width + 10, 30)
-            context.fillStyle = this.info_box.text_color
-
-            context.fillText(point.y, render_x, render_y - 15)
-
+            this.renderInfoBox(context, this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
             // this.drawBubble(bubble_context, relative_mouse_x, relative_mouse_y, 30, 30, 2)
 
         }
@@ -225,6 +226,36 @@ export default class Graph {
         context.lineWidth = this.pointStyle.lineWidth;
         context.fill();
         context.stroke();
+    }
+    /**
+     * @param {CanvasRenderingContext2D} context
+     * @param {Number} mouse_x 
+     * @param {Number} mouse_y 
+     * @param {Point} point 
+     */
+    renderInfoBox(context, mouse_x, mouse_y, point) {
+        // let context = this.canvas.getContext("2d");
+        let render_x = mouse_x;
+        let render_y = mouse_y;
+
+        if (render_y - 25 - this.padding_y < 0) {
+            render_y += 40 + 15
+        }
+
+        context.globalCompositeOperation = "source-over";
+        context.font = this.info_box.fontStyle
+        context.textAlign = this.info_box.textAlign
+        context.fillStyle = this.info_box.background_color
+        console.log(render_x, render_y, this.padding_y)
+        let text_width = context.measureText(point.y)
+        console.log("box left ", render_x - (text_width.width / 2))
+        context.fillRect(render_x - (text_width.width / 2) - 5, render_y - 15 - 25, text_width.width + 10, 30)
+        context.fillStyle = this.info_box.text_color
+
+        context.fillText(point.y, render_x, render_y - 15)
+
+        context.globalCompositeOperation = "destination-over";
+
     }
 
     drawBubble(ctx, x, y, w, h, radius) {
@@ -249,16 +280,20 @@ export default class Graph {
     renderGraph(relative_mouse_x, relative_mouse_y) {
 
         this.initGraph(this.canvas);
+        let cxt = this.canvas.getContext("2d");
         this.points.forEach((value, index) => {
             if (this.points.length > 0 && index < this.points.length - 1) {
                 this.drawLine(value, this.points[index + 1]);
 
             }
 
-            this.drawCircle(value, this.pointStyle.pointSize, relative_mouse_x, relative_mouse_y)
+            this.drawCircle(value, this.pointStyle.pointSize, relative_mouse_x, relative_mouse_y, cxt);
 
         })
 
+        // if (this.info_box.render && this.canvas.getContext("2d").isPointInPath(relative_mouse_x, relative_mouse_y)) {
+        //     this.renderInfoBox(this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
+        // }
 
 
     }
