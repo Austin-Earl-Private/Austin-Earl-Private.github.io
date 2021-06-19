@@ -46,7 +46,17 @@ let xs = [20,40,60,80,100]
 
 graphControler.insertPoints(xs,ys);
 console.log(graphControler.points);
-graphControler.renderGraph();
+graphControler.renderGraph(0,0);
+
+graphControler.canvas.onmousemove = function(e){
+    var rect = this.getBoundingClientRect(),
+      x = e.clientX - rect.left,
+      y = e.clientY - rect.top,
+      i = 0, r;
+
+      graphControler.renderGraph(x,y)
+}
+
 document.querySelector("#recalulate").onclick = ()=>{
     let h = document.querySelector("#size").value
     /** @type{String} */
