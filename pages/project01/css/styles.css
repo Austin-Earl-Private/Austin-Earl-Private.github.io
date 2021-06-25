@@ -89,7 +89,21 @@ html {
 
 }
 
-
+.vertial-bar {
+    border-left: 3px dashed black;
+    margin-left: 5px;
+    margin-right: 5px;
+    
+}
+.info-bar {
+    padding: 10px;
+    display:flex;
+    flex-direction: row;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
 
 .arrow {
     border: solid black;
