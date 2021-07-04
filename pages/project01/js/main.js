@@ -1,3 +1,4 @@
+import Graph from "./ChartGraph.js";
 let save_assets;
 
 function getAssets() {
@@ -22,21 +23,96 @@ function getAssets() {
         .catch(error => console.log(error));
 }
 
+async function getAssetInformation(id) {
+    console.log("done")
+    // const http = new XMLHttpRequest();
+    const url = `https://api.coincap.io/v2/assets/${id}`
+    let data = await fetch(url)
+        .then(data => {
+            return data.json();
+        })
+        .catch(error => console.log(error));
+    console.log("asset info ", data)
+    return data
+}
+
 async function getHistoryForAsset(id, interval) {
     console.log("Getting asset history for id " + id);
     const url = `https://api.coincap.io/v2/assets/${id}/history?interval=${interval}`
-    console.log("calling url ", url)
     let data = fetch(url)
-        // .then(data => {
-        //     console.dir(data.text())
-        //     return data
-        // })
         .then(data => {
             return data.json()
         })
-    console.log("data is ", data)
     return data
 
+}
+
+
+async function renderGraph(id, interval) {
+    let main_content = document.querySelector("#graph-placer")
+    main_content.innerHTML = `
+    <div class="graph">
+    <canvas id="myCanvas" class="myCanvas"  >
+      Sorry! Your browser doesn’t support Canvas.
+  </canvas>
+  </div>
+    `
+
+
+    var canvas = document.getElementById("myCanvas");
+    let graphControler = new Graph(canvas, "line");
+
+
+    let history_data = await getHistoryForAsset(id, "m15")
+    let startDate = new Date(history_data["data"][0]["time"])
+    let endDate = new Date(history_data["data"][history_data["data"].length - 1]["time"])
+
+    let adjusted_date = new Date();
+    adjusted_date.setDate(endDate.getDate() - 1)
+    startDate = adjusted_date
+    /**
+     * @type []
+     */
+    let h24_bucket = history_data["data"].filter(
+        (ele) => {
+            return new Date(ele["time"]) > startDate
+        }
+    )
+    let x_values = []
+    let y_values = []
+    let count = 0
+    h24_bucket.forEach(ele => {
+        count += 10
+        x_values.push(count)
+        y_values.push(parseFloat(ele.priceUsd))
+    })
+
+    graphControler.insertPoints(x_values, y_values);
+    graphControler.renderGraph(0, 0);
+
+    graphControler.canvas.onmousemove = function (e) {
+        var rect = this.getBoundingClientRect(),
+            x = e.clientX - rect.left,
+            y = e.clientY - rect.top,
+            i = 0,
+            r;
+
+        graphControler.renderGraph(x, y)
+    }
+
+
+}
+
+async function initRenderMainContent() {
+    let main_content = document.querySelector("#main-content")
+    main_content.innerHTML = `
+    <div id="info-bar-placer">
+    
+    </div>
+    <div id="graph-placer">
+    
+    </div>
+    `
 }
 
 async function renderInfoBar(requestItem) {
@@ -44,7 +120,9 @@ async function renderInfoBar(requestItem) {
      * @type 
      */
     let history_data = await getHistoryForAsset(requestItem.id, "m15")
-    console.log(history_data)
+    let price = await getAssetInformation(requestItem.id)
+    price = price["data"]
+    console.log(price)
     let startDate = new Date(history_data["data"][0]["time"])
     let endDate = new Date(history_data["data"][history_data["data"].length - 1]["time"])
 
@@ -62,7 +140,7 @@ async function renderInfoBar(requestItem) {
     console.log(h24_bucket)
 
 
-    document.querySelector("#main-content").innerHTML = `
+    document.querySelector("#info-bar-placer").innerHTML = `
             <div class="info-bar flex-row">
                 <div class="info-bar-interval flex-row">
                     <label>Time Interval: </label>
@@ -95,9 +173,16 @@ async function renderInfoBar(requestItem) {
                 <div class="info-bar-24-rate flex-row">
                     <label>24h Rate: </label>
                     <output> ${parseFloat(requestItem["changePercent24Hr"]).toLocaleString(undefined,{minimumFractionDigits:4})}%</output>
+                    <section class="vertial-bar"></section>
+                    <section class="vertial-bar"></section>
+                </div>
+                <div class="info-bar-usd flex-row">
+                    <label>Price: </label>
+                    <output>$${parseFloat(price.priceUsd)}</output>
                 </div>
             </div>
             `
+
 }
 
 function indicateSidebarSelection() {
@@ -147,7 +232,12 @@ function populateSideBar(listDataRAW) {
         let link = document.createElement("a");
         link.href = "#"
         link.addEventListener("click", () => {
-            renderInfoBar(element)
+            initRenderMainContent().then(
+                renderInfoBar(element)
+            ).then(
+                renderGraph(element.id)
+            )
+
         }, false)
 
         link.appendChild(listItem);
