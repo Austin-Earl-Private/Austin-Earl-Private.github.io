@@ -9,8 +9,10 @@ export default class Graph {
     constructor(canvas_ref, type) {
         this.canvas = canvas_ref;
         this.type = type;
+        this.left_padding = 30;
         this.padding_x = 30;
         this.padding_y = 30;
+        // this.padding_y = this.padding_y + this.left_padding
         this.graph_h = canvas_ref.parentElement.getBoundingClientRect().height;
         this.graph_w = canvas_ref.parentElement.getBoundingClientRect().width;
 
@@ -41,7 +43,7 @@ export default class Graph {
         this.lineStyle.lineColor = "#00b7ff"
 
         this.pointPosition = {}
-        this.pointPosition.x_spacing = 20;
+        this.pointPosition.x_spacing = 15;
 
 
     };
@@ -62,6 +64,8 @@ export default class Graph {
         this.max = 0;
 
 
+
+
         let max = 0;
         let min = 0;
         min = array_y_values[0]
@@ -72,30 +76,54 @@ export default class Graph {
                 min = ele;
             }
         })
-        min = min * .95
-        this.min = min;
-        this.max = max;
-        console.log("minmax", min, max)
+        min = min * .99
+        max += max * .01
+
+        if (min.toFixed(2) != 0) {
+            this.min = min
+            this.max = max
+        } else {
+            this.min = min
+            this.max = max
+        }
+
+        console.log("minmax", this.min, this.max)
 
         let y_vals = array_y_values
         let x_pos = 0;
-        x_pos += this.padding_x
+
+        // let text_width = this.canvas.getContext("2d").measureText(this.max)
+        // this.left_padding = text_width.width
+        console.log("left padding = ", this.left_padding)
+
+        // x_pos += this.padding_x + this.left_padding
+        console.log("x_pos", x_pos)
+
+        this.min_x = 0
+        this.max_x = 0
+        console.log("this is max x " + this.max_x)
         array_x_values.forEach((value, index) => {
             this.points.push(new Point(x_pos, y_vals[index]));
-            x_pos += this.pointPosition.x_spacing;
+            x_pos += 1
+            if (value > this.max_x) {
+                this.max_x = x_pos
+            } else if (value < this.min_x) {
+                this.min_x = x_pos;
+            }
+
+
             // console.log(`y percent is ${y_vals[index]} `,(y_vals[index]-min)/(max-min))
         })
+        console.log(this.points)
+
     }
 
     resizeGraph(canvas) {
         let parent = canvas.parentElement;
-        console.log(canvas.width, canvas.height)
         canvas.width = parent.getBoundingClientRect().width - 6;
         canvas.height = parent.getBoundingClientRect().height - 6;
-        console.log(canvas.width, canvas.height)
         this.graph_h = canvas.height;
         this.graph_w = canvas.width;
-        console.log()
 
 
     }
@@ -111,7 +139,7 @@ export default class Graph {
         let context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height)
         context.fillStyle = this.graphGridStyle.background_color;
-        context.fillRect(this.padding_y, this.padding_x, this.graph_w - this.padding_x * 2, this.graph_h - this.padding_y * 2)
+        context.fillRect(this.padding_y + this.left_padding, this.padding_x, this.graph_w - this.padding_x * 2 - this.left_padding, this.graph_h - this.padding_y * 2)
         this.renderGraphLines();
 
     }
@@ -121,14 +149,14 @@ export default class Graph {
         cxt.strokeStyle = this.graphGridStyle.BaseLineColor
 
         cxt.beginPath();
-        cxt.moveTo(this.padding_x, this.graph_h - this.padding_y);
+        cxt.moveTo(this.padding_x + this.left_padding, this.graph_h - this.padding_y);
         cxt.lineTo(this.graph_w - this.padding_x, this.graph_h - this.padding_y)
         cxt.closePath();
         cxt.stroke()
 
         cxt.beginPath();
-        cxt.moveTo(this.padding_x, this.graph_h - this.padding_y);
-        cxt.lineTo(this.padding_x, this.padding_y)
+        cxt.moveTo(this.padding_x + this.left_padding, this.graph_h - this.padding_y);
+        cxt.lineTo(this.padding_x + this.left_padding, this.padding_y)
         cxt.closePath();
         cxt.stroke()
 
@@ -147,10 +175,12 @@ export default class Graph {
         cxt.strokeStyle = this.graphGridStyle.innerLineColor
         // CONVERT THIS INTO FUNCTION AND LOOP OVER
         let start_y_percent = (value - this.min) / (this.max - this.min);
-        let graph_render_hight = this.graph_h - this.padding_y * 2;
+        let graph_render_hight = this.graph_h - this.padding_x * 2;
         let base_y_hight = graph_render_hight - (graph_render_hight * start_y_percent) + this.padding_y;
+        // this.left_padding = cxt.measureText(value)
+
         cxt.beginPath();
-        cxt.moveTo(this.padding_x, base_y_hight);
+        cxt.moveTo(this.padding_x + this.left_padding, base_y_hight);
         cxt.lineTo(this.graph_w - this.padding_x, base_y_hight)
         cxt.closePath();
         cxt.stroke()
@@ -158,7 +188,7 @@ export default class Graph {
         cxt.font = "15px Arial"
         cxt.fillStyle = this.graphGridStyle.innerLineColor
 
-        cxt.fillText(value, this.padding_x - 5, base_y_hight + 5)
+        cxt.fillText(value.toFixed(4), this.padding_x - 5 + this.left_padding, base_y_hight + 5)
     }
 
     drawLine(startPoint, endPoint) {
@@ -168,18 +198,20 @@ export default class Graph {
 
         // context.moveTo(startPoint.x, startPoint.y);
 
-        let graph_render_hight = this.graph_h - this.padding_y * 2;
-        let start_y_percent = (startPoint.y - this.min) / (this.max - this.min);
-        let end_y_percent = (endPoint.y - this.min) / (this.max - this.min);
+        let graph_render_hight = this.graph_h - this.padding_x * 2;
+        let graph_render_length = this.graph_w - this.padding_y * 2;
 
-        let start_point_y_calc = graph_render_hight - (graph_render_hight * start_y_percent) + this.padding_y;
-        let end_point_y_calc = graph_render_hight - (graph_render_hight * end_y_percent) + this.padding_y;
-
-
-        context.moveTo(startPoint.x, start_point_y_calc);
+        let start_point_y_calc = this.getPositionalPointFromBounds(startPoint.y, this.min, this.max, 0, graph_render_hight)
+        let end_point_y_calc = this.getPositionalPointFromBounds(endPoint.y, this.min, this.max, 0, graph_render_hight);
+        let start_point_x_calc = this.getPositionalPointFromBounds(startPoint.x, this.max_x, this.min_x, this.left_padding + this.padding_x, graph_render_length + this.left_padding)
+        let end_point_x_calc = this.getPositionalPointFromBounds(endPoint.x, this.max_x, this.min_x, this.left_padding + this.padding_x, graph_render_length + this.left_padding);
 
 
-        context.lineTo(endPoint.x, end_point_y_calc);
+
+        context.moveTo(start_point_x_calc, start_point_y_calc);
+
+
+        context.lineTo(end_point_x_calc, end_point_y_calc);
 
         context.strokeStyle = this.lineStyle.lineColor;
         context.lineWidth = this.lineStyle.lineWidth;
@@ -200,27 +232,37 @@ export default class Graph {
 
 
         let graph_render_hight = this.graph_h - this.padding_y * 2;
+        let graph_render_length = this.graph_w - this.padding_x * 2;
         let point_percent = (point.y - this.min) / (this.max - this.min);
+        let x_point_percent = (point.x - this.max_x) / (this.min_x - this.max_x);
 
-        let point_calc = graph_render_hight - (graph_render_hight * point_percent) + this.padding_y;
 
+        // let point_calc = graph_render_hight - (graph_render_hight * point_percent) + this.padding_y;
+        // let x_point_calc = graph_render_length - (graph_render_length * x_point_percent) + this.padding_x;
         // var context = this.canvas.getContext("2d");
+        let point_calc = this.getPositionalPointFromBounds(point.y, this.min, this.max, 0, graph_render_hight)
+        let x_point_calc = this.getPositionalPointFromBounds(point.x, this.max_x, this.min_x, this.left_padding + this.padding_x, graph_render_length + this.left_padding);
 
 
 
 
         context.beginPath();
-        context.arc(point.x, point_calc, size, 0, Math.PI * 2, true);
+        context.arc(x_point_calc, point_calc, size, 0, Math.PI * 2, true);
         context.closePath();
         if (context.isPointInPath(relative_mouse_x, relative_mouse_y)) {
-            // context.globalCompositeOperation = "destination-over";
+            context.globalCompositeOperation = "source-over";
             context.beginPath();
-            context.arc(point.x, point_calc, size + size * this.pointStyle.pointGrowthMultiplyer, 0, Math.PI * 2, true);
+
+
+            console.log("width", this.graph_w, "Xpoint clacl", x_point_calc, "Percent ", x_point_percent, " x_min ", this.min_x, "max x ", this.max_x, "point x", point.x)
+
+            context.arc(x_point_calc, point_calc, size + size * this.pointStyle.pointGrowthMultiplyer, 0, Math.PI * 2, true);
             context.closePath();
             this.info_box.render = true;
             this.info_box.mouse_x = relative_mouse_x;
             this.info_box.mouse_y = relative_mouse_y;
             this.info_box.point = point;
+            context.globalCompositeOperation = "destination-over";
 
 
             this.renderInfoBox(context, this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
@@ -232,6 +274,7 @@ export default class Graph {
         context.lineWidth = this.pointStyle.lineWidth;
         context.fill();
         context.stroke();
+
     }
     /**
      * @param {CanvasRenderingContext2D} context
@@ -254,14 +297,38 @@ export default class Graph {
         context.fillStyle = this.info_box.background_color
         console.log(render_x, render_y, this.padding_y)
 
-        let text = parseFloat(point.y).toFixed(4) + ""
+
+        let graph_render_length = this.graph_w - this.padding_y * 2
+
+        let text = parseFloat(point.y) + ""
 
         let text_width = context.measureText(text)
-        console.log("box left ", render_x - (text_width.width / 2))
-        context.fillRect(render_x - (text_width.width / 2) - 5, render_y - 15 - 25, text_width.width + 10, 30)
-        context.fillStyle = this.info_box.text_color
 
-        context.fillText(text, render_x, render_y - 15)
+        if (mouse_x - text_width.width / 2 < 0) {
+            // Shift over to the right if we are going off the graph
+            let shift = mouse_x - text_width.width / 2
+            context.fillRect(render_x - (text_width.width / 2) - 5 - shift, render_y - 15 - 25, text_width.width + 10, 30)
+            context.fillStyle = this.info_box.text_color
+            console.log("helpslpdflsdpflpsdlf", render_x - shift)
+
+            context.fillText(text, render_x - shift + 5, render_y - 15)
+        } else if (mouse_x + text_width.width / 2 > graph_render_length) {
+            let shift = mouse_x + text_width.width / 2 - graph_render_length
+            context.fillRect(render_x - (text_width.width / 2) - 5 - shift, render_y - 15 - 25, text_width.width + 10, 30)
+            context.fillStyle = this.info_box.text_color
+            console.log("nsdfnsdnfnsdfndsnfds", render_x - shift)
+
+            context.fillText(text, render_x - shift + 5, render_y - 15)
+        } else {
+            context.fillRect(render_x - (text_width.width / 2) - 5, render_y - 15 - 25, text_width.width + 10, 30)
+            context.fillStyle = this.info_box.text_color
+
+            context.fillText(text, render_x, render_y - 15)
+        }
+
+        console.log("box left ", render_x - (text_width.width / 2))
+
+
 
         context.globalCompositeOperation = "destination-over";
 
@@ -307,12 +374,45 @@ export default class Graph {
 
     }
 
+    /**
+     * 
+     * @param {Number} value 
+     * @param {Number} min 
+     * @param {Number} max 
+     */
+    getNormalizedPercentValue(value, min, max) {
+        return (value - min) / (max - min);
+    }
+
+    /**
+     * Get positionalPoint From bounds will calculate the Percent difference from min and max possible values
+     * and return a value with that percent inbetween the lower and upper Bounds.
+     * if your min val is 5 and max val 15 and lower bounds 0 and upper bounds 10
+     * and your value is 10
+     * the percent value is 50%
+     * 50% of 0-10 is 5 
+     * so 5 is returned.
+     * This is used to allow dynamicly scaled windows for points on the y and x
+     * @param {Number} value 
+     * @param {Number} min 
+     * @param {Number} max 
+     * @param {Number} lowerBounds 
+     * @param {Number} upperBounds 
+     */
+    getPositionalPointFromBounds(value, min, max, lowerBounds, upperBounds) {
+        let percent = this.getNormalizedPercentValue(value, min, max);
+        let innerBounds = upperBounds - lowerBounds;
+        let valueMoved = (innerBounds - (innerBounds * percent)) + lowerBounds
+        return valueMoved
+    }
+
 
 }
 
 export class Point {
     x = 0;
     y = 0;
+    extra = {}
     /**
      * 
      * @param {Number} x 
@@ -321,6 +421,14 @@ export class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+    };
+
+    /**
+     * 
+     * @param {Object} extra
+     */
+    set extra(extra) {
+        this.extra = extra
     };
 
 };

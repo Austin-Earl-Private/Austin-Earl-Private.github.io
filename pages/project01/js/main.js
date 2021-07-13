@@ -112,7 +112,113 @@ async function initRenderMainContent() {
     <div id="graph-placer">
     
     </div>
+    <div id="columns">
+        <div id="markets-placer">
+        
+        </div>
+        <div id="exchanges-placer">
+    
+        </div>
+    </div>
     `
+}
+
+async function getMarkets(id, limit) {
+    const url = `https://api.coincap.io/v2/assets/${id}/markets?limit=${limit}`
+
+    fetch(url)
+        .then(data => {
+            return data.json();
+        })
+        .then(data => renderMarkets(data)).then(console.log("Rendered markets"))
+        .catch(error => console.log(error));
+
+}
+async function getMarketLinkMap() {
+    const url = `https://api.coincap.io/v2/exchanges`
+    let map = new Map()
+    return fetch(url)
+        .then(data => {
+
+            return data.json();
+
+        }).then(data => {
+            console.log("data is ", data)
+            data["data"].forEach(ele => {
+                map.set(ele["name"], ele["exchangeUrl"])
+            })
+            return map
+        })
+        .then(console.log("Rendered markets"))
+        .catch(error => console.log(error));
+
+}
+
+async function renderMarkets(requestItems) {
+    /**
+     * @type {Map}
+     */
+    let map = await getMarketLinkMap();
+    console.log(map)
+    let templateStart = `
+    <table>
+        <tr>
+            <th>Market</th>
+            <th>Base Currency</th>
+            <th>Quote Currency</th>
+            <th>Volume in Past 24 hr</th>
+            <th>USD Price</th>
+            <th>Total Volume Percent</th>
+        </tr>
+    `
+    let templateMiddle = ``
+    // `<tr>
+    //     <td>Binance | BTC to USDT | Volume: 277775213.1923 | USD Price: 6263.8645 | Volume Percent: 7.4239%</td>
+    // </tr>
+    // <tr>
+    //     <td>Binance | BTC to USDT | Volume: 277775213.1923 | USD Price: 6263.8645 | Volume Percent: 7.4239%</td>
+    // </tr>
+    // <tr>
+    //     <td>Binance | BTC to USDT | Volume: 277775213.1923 | USD Price: 6263.8645 | Volume Percent: 7.4239%</td>
+    // </tr>`
+    let templateEnd = `
+    </table>
+    `
+
+    requestItems["data"].forEach(ele => {
+        // console.log(ele, templateMiddle)
+
+        let exchangeId = ele["exchangeId"]
+        let exchangeUrl = map.get(exchangeId)
+        let baseSymbol = ele["baseSymbol"]
+        let quoteSymbol = ele["quoteSymbol"]
+
+        let volumeUsd24Hr = parseFloat(ele["volumeUsd24Hr"]).toLocaleString(undefined, {
+            minimumFractionDigits: 4
+        })
+        let priceUsd = parseFloat(ele["priceUsd"]).toLocaleString(undefined, {
+            minimumFractionDigits: 4
+        })
+        let volumePercent = parseFloat(ele["volumePercent"]).toLocaleString(undefined, {
+            minimumFractionDigits: 4
+        })
+
+
+        // console.log(exchangeId, exchangeUrl, baseSymbol, quoteSymbol, volumeUsd24Hr, "raw", ele["volumeUsd24Hr"], priceUsd, volumePercent, "raw", ele["volumePercent"])
+        templateMiddle = templateMiddle.concat(`
+        <tr>
+        <td><a href="${exchangeUrl}">${exchangeId} </a></td>
+        <td> ${baseSymbol} </td>
+        <td> ${quoteSymbol} </td>
+        <td> ${volumeUsd24Hr} </td>
+        <td> ${priceUsd} </td>
+        <td> ${volumePercent}%</td>
+   </tr>`)
+
+    })
+
+    document.querySelector("#markets-placer").innerHTML = templateStart + templateMiddle + templateEnd
+
 }
 
 async function renderInfoBar(requestItem) {
@@ -142,6 +248,13 @@ async function renderInfoBar(requestItem) {
 
     document.querySelector("#info-bar-placer").innerHTML = `
             <div class="info-bar flex-row">
+                <div class="info-bar-name flex-row">
+                    <label>Name: </label>
+                    <output> ${requestItem["name"]}</output>
+                    <section class="vertial-bar"></section>
+                    <section class="vertial-bar"></section>
+
+                </div>
                 <div class="info-bar-interval flex-row">
                     <label>Time Interval: </label>
                     <output> 1 Day</output>
@@ -236,6 +349,8 @@ function populateSideBar(listDataRAW) {
                 renderInfoBar(element)
             ).then(
                 renderGraph(element.id)
+            ).then(
+                getMarkets(element.id, 10)
             )
 
         }, false)
