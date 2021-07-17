@@ -18,12 +18,12 @@ export default class Graph {
 
         this.graphGridStyle = {}
         this.graphGridStyle.background_color = "#00000025"
-        this.graphGridStyle.BaseLineColor = "black"
-        this.graphGridStyle.innerLineColor = "grey"
+        this.graphGridStyle.BaseLineColor = "#000000"
+        this.graphGridStyle.innerLineColor = "#808080"
 
         this.info_box = {}
         this.info_box.background_color = "#a0a0a08f"
-        this.info_box.text_color = "black"
+        this.info_box.text_color = "#000000"
         this.info_box.textAlign = "center"
         this.info_box.fontStyle = "bold 20px  Verdana "
         this.info_box.render = false;
@@ -44,6 +44,8 @@ export default class Graph {
 
         this.pointPosition = {}
         this.pointPosition.x_spacing = 15;
+
+        this.selectedPoint;
 
 
     };
@@ -87,21 +89,17 @@ export default class Graph {
             this.max = max
         }
 
-        console.log("minmax", this.min, this.max)
 
         let y_vals = array_y_values
         let x_pos = 0;
 
         // let text_width = this.canvas.getContext("2d").measureText(this.max)
         // this.left_padding = text_width.width
-        console.log("left padding = ", this.left_padding)
 
         // x_pos += this.padding_x + this.left_padding
-        console.log("x_pos", x_pos)
 
         this.min_x = 0
         this.max_x = 0
-        console.log("this is max x " + this.max_x)
         array_x_values.forEach((value, index) => {
             this.points.push(new Point(x_pos, y_vals[index]));
             x_pos += 1
@@ -114,7 +112,6 @@ export default class Graph {
 
             // console.log(`y percent is ${y_vals[index]} `,(y_vals[index]-min)/(max-min))
         })
-        console.log(this.points)
 
     }
 
@@ -215,7 +212,9 @@ export default class Graph {
 
         context.strokeStyle = this.lineStyle.lineColor;
         context.lineWidth = this.lineStyle.lineWidth;
+        // console.log(context.strokeStyle, context.fillStyle, context.lineWidth)
         context.closePath();
+        // context.globalCompositeOperation = "source-over";
 
         context.stroke();
     }
@@ -230,6 +229,7 @@ export default class Graph {
     drawCircle(point, size, relative_mouse_x, relative_mouse_y, context) {
 
 
+        // context.globalCompositeOperation = "source-over";
 
         let graph_render_hight = this.graph_h - this.padding_y * 2;
         let graph_render_length = this.graph_w - this.padding_x * 2;
@@ -244,17 +244,21 @@ export default class Graph {
         let x_point_calc = this.getPositionalPointFromBounds(point.x, this.max_x, this.min_x, this.left_padding + this.padding_x, graph_render_length + this.left_padding);
 
 
-
+        context.strokeStyle = this.pointStyle.outLine_color;
+        context.fillStyle = this.pointStyle.background_color;
+        context.lineWidth = this.pointStyle.lineWidth;
 
         context.beginPath();
         context.arc(x_point_calc, point_calc, size, 0, Math.PI * 2, true);
         context.closePath();
         if (context.isPointInPath(relative_mouse_x, relative_mouse_y)) {
-            context.globalCompositeOperation = "source-over";
+            // context.globalCompositeOperation = "source-over";
+
+            // context.globalCompositeOperation = "source-over";
             context.beginPath();
 
 
-            console.log("width", this.graph_w, "Xpoint clacl", x_point_calc, "Percent ", x_point_percent, " x_min ", this.min_x, "max x ", this.max_x, "point x", point.x)
+            // console.log("width", this.graph_w, "Xpoint clacl", x_point_calc, "Percent ", x_point_percent, " x_min ", this.min_x, "max x ", this.max_x, "point x", point.x)
 
             context.arc(x_point_calc, point_calc, size + size * this.pointStyle.pointGrowthMultiplyer, 0, Math.PI * 2, true);
             context.closePath();
@@ -262,18 +266,24 @@ export default class Graph {
             this.info_box.mouse_x = relative_mouse_x;
             this.info_box.mouse_y = relative_mouse_y;
             this.info_box.point = point;
-            context.globalCompositeOperation = "destination-over";
+            // context.globalCompositeOperation = "destination-over";
+            // context.globalCompositeOperation = "destination-over";
 
 
-            this.renderInfoBox(context, this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
+            // this.renderInfoBox(context, this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
             // this.drawBubble(bubble_context, relative_mouse_x, relative_mouse_y, 30, 30, 2)
-
+            // console.log(context.strokeStyle, context.fillStyle, context.lineWidth)
         }
         context.strokeStyle = this.pointStyle.outLine_color;
         context.fillStyle = this.pointStyle.background_color;
         context.lineWidth = this.pointStyle.lineWidth;
+        if (context.isPointInPath(relative_mouse_x, relative_mouse_y)) {
+            console.log(context.strokeStyle, context.fillStyle, context.lineWidth)
+        }
         context.fill();
         context.stroke();
+        // context.globalCompositeOperation = "destination-over";
+
 
     }
     /**
@@ -295,7 +305,7 @@ export default class Graph {
         context.font = this.info_box.fontStyle
         context.textAlign = this.info_box.textAlign
         context.fillStyle = this.info_box.background_color
-        console.log(render_x, render_y, this.padding_y)
+        // console.log(render_x, render_y, this.padding_y)
 
 
         let graph_render_length = this.graph_w - this.padding_y * 2
@@ -309,14 +319,12 @@ export default class Graph {
             let shift = mouse_x - text_width.width / 2
             context.fillRect(render_x - (text_width.width / 2) - 5 - shift, render_y - 15 - 25, text_width.width + 10, 30)
             context.fillStyle = this.info_box.text_color
-            console.log("helpslpdflsdpflpsdlf", render_x - shift)
 
             context.fillText(text, render_x - shift + 5, render_y - 15)
         } else if (mouse_x + text_width.width / 2 > graph_render_length) {
             let shift = mouse_x + text_width.width / 2 - graph_render_length
             context.fillRect(render_x - (text_width.width / 2) - 5 - shift, render_y - 15 - 25, text_width.width + 10, 30)
             context.fillStyle = this.info_box.text_color
-            console.log("nsdfnsdnfnsdfndsnfds", render_x - shift)
 
             context.fillText(text, render_x - shift + 5, render_y - 15)
         } else {
@@ -326,11 +334,10 @@ export default class Graph {
             context.fillText(text, render_x, render_y - 15)
         }
 
-        console.log("box left ", render_x - (text_width.width / 2))
 
 
 
-        context.globalCompositeOperation = "destination-over";
+        // context.globalCompositeOperation = "destination-over";
 
     }
 
@@ -354,9 +361,9 @@ export default class Graph {
         ctx.stroke();
     }
     renderGraph(relative_mouse_x, relative_mouse_y) {
-
         this.initGraph(this.canvas);
         let cxt = this.canvas.getContext("2d");
+        this.info_box.render = false
         this.points.forEach((value, index) => {
             if (this.points.length > 0 && index < this.points.length - 1) {
                 this.drawLine(value, this.points[index + 1]);
@@ -366,6 +373,12 @@ export default class Graph {
             this.drawCircle(value, this.pointStyle.pointSize, relative_mouse_x, relative_mouse_y, cxt);
 
         })
+
+        // this.renderInfoBox(this.getContext("2d"), relative_mouse_x, relative_mouse_y, this.selectedPoint)
+        if (this.info_box.render) {
+
+            this.renderInfoBox(this.canvas.getContext("2d"), this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);
+        }
 
         // if (this.info_box.render && this.canvas.getContext("2d").isPointInPath(relative_mouse_x, relative_mouse_y)) {
         //     this.renderInfoBox(this.info_box.mouse_x, this.info_box.mouse_y, this.info_box.point);

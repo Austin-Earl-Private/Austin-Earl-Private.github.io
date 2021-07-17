@@ -2,6 +2,8 @@ nav {
     background-color: rgb(80, 80, 80);
     border-radius: 25px 25px 25px 0px;
     margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
     
 }
 
@@ -152,22 +154,94 @@ html {
 
 }
 
-table {
+.color-table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    row-gap: 2px;
+    
 }
 
-td,
-th {
+.color-table td,
+.color-table th {
     border: 1px solid #c4c4c4;
     text-align: left;
     padding: 8px;
 }
 
-tr:nth-child(even) {
+.color-table tr:nth-child(even) {
     background-color: #dddddd;
 }
-tr:hover {
+.color-table tr:hover {
     background-color: #999999;
 }
+
+#gear {
+    font-size: 34px;
+    padding: 1px;
+    margin-right: 30px;
+    width: 40px;
+    height: 40px;
+    align-self: center;
+
+}
+#gear:hover{
+    filter: brightness(18);
+}
+
+.hide{
+    display: none;
+}
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+.modal-content {
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: row;
+    margin: 10% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+
+.modal-side-bar {
+    border-right: 3px solid black ;
+
+}
+.modal-side-bar ul {
+    list-style: none;
+    
+    padding-left: 0px;
+}
+
+.modal-main {
+    width: 100%;
+    margin-left: 10px;
+}
+.modal-main table{
+    border: none;
+}
+  #modal-close-button {
+    color: #aaa;
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px;
+  }
+#modal-close-button:hover,
+#modal-close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+  

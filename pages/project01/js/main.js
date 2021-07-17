@@ -1,5 +1,9 @@
 import Graph from "./ChartGraph.js";
+
 let save_assets;
+let current_graph;
+let selectedCoin;
+
 
 function getAssets() {
     console.log("done")
@@ -63,6 +67,17 @@ async function renderGraph(id, interval) {
     let graphControler = new Graph(canvas, "line");
 
 
+    let background = localStorage.getItem("graph-background") ? localStorage.getItem("graph-background") : "#00000025"
+    let graph_line = localStorage.getItem("graph-line") ? localStorage.getItem("graph-line") : "#00b7ff"
+    let graph_dot = localStorage.getItem("graph-dot") ? localStorage.getItem("graph-dot") : "#02aaec"
+    let graph_dot_outline = localStorage.getItem("graph-dot-outline") ? localStorage.getItem("graph-dot-outline") : "#0077a7"
+
+    graphControler.graphGridStyle.background_color = background
+    graphControler.lineStyle.lineColor = graph_line
+    graphControler.pointStyle.outLine_color = graph_dot_outline
+    graphControler.pointStyle.background_color = graph_dot
+
+
     let history_data = await getHistoryForAsset(id, "m15")
     let startDate = new Date(history_data["data"][0]["time"])
     let endDate = new Date(history_data["data"][history_data["data"].length - 1]["time"])
@@ -89,6 +104,7 @@ async function renderGraph(id, interval) {
 
     graphControler.insertPoints(x_values, y_values);
     graphControler.renderGraph(0, 0);
+    console.dir(graphControler)
 
     graphControler.canvas.onmousemove = function (e) {
         var rect = this.getBoundingClientRect(),
@@ -161,7 +177,7 @@ async function renderMarkets(requestItems) {
     let map = await getMarketLinkMap();
     console.log(map)
     let templateStart = `
-    <table>
+    <table class="color-table">
         <tr>
             <th>Market</th>
             <th>Base Currency</th>
@@ -182,7 +198,7 @@ async function renderMarkets(requestItems) {
     //     <td>Binance | BTC to USDT | Volume: 277775213.1923 | USD Price: 6263.8645 | Volume Percent: 7.4239%</td>
     // </tr>`
     let templateEnd = `
-    </table>
+    </table class="color-table">
     `
 
     requestItems["data"].forEach(ele => {
@@ -204,21 +220,123 @@ async function renderMarkets(requestItems) {
         })
 
 
+        console.log("Things", exchangeId, exchangeUrl, baseSymbol, quoteSymbol, volumeUsd24Hr, priceUsd, volumePercent)
+        console.log("RAW", ele["exchangeId"], map.get(exchangeId), ele["baseSymbol"], ele["quoteSymbol"], ele["volumeUsd24Hr"], ele["priceUsd"], ele["volumePercent"])
+
+
         // console.log(exchangeId, exchangeUrl, baseSymbol, quoteSymbol, volumeUsd24Hr, "raw", ele["volumeUsd24Hr"], priceUsd, volumePercent, "raw", ele["volumePercent"])
         templateMiddle = templateMiddle.concat(`
         <tr>
         <td><a href="${exchangeUrl}">${exchangeId} </a></td>
         <td> ${baseSymbol} </td>
         <td> ${quoteSymbol} </td>
-        <td> ${volumeUsd24Hr} </td>
+        <td> ${volumeUsd24Hr != "NaN" ? volumeUsd24Hr + "%" : "Not avaible"} </td>
         <td> ${priceUsd} </td>
-        <td> ${volumePercent}%</td>
+        <td> ${volumePercent != "NaN" ? volumePercent + "%" : "Not avaible"}</td>
    </tr>`)
 
     })
 
     document.querySelector("#markets-placer").innerHTML = templateStart + templateMiddle + templateEnd
 
+}
+
+function renderSettingModal() {
+    /**
+     * @type {HTMLDivElement}
+     */
+    let modal = document.querySelector("#modal")
+    /**
+     * @type {HTMLDivElement}
+     */
+    let modal_content = document.querySelector("#modal-content")
+
+    modal.classList.remove("hide")
+
+    let background = localStorage.getItem("graph-background") ? localStorage.getItem("graph-background") : "#00000025"
+    let graph_line = localStorage.getItem("graph-line") ? localStorage.getItem("graph-line") : "#00b7ff"
+    let graph_dot = localStorage.getItem("graph-dot") ? localStorage.getItem("graph-dot") : "#02aaec"
+    let graph_dot_outline = localStorage.getItem("graph-dot-outline") ? localStorage.getItem("graph-dot-outline") : "#0077a7"
+
+
+    let modalInnerHTML = `
+
+    <div class="modal-side-bar">
+                <ul>
+                    <li>Graph Settings</li>
+                </ul>
+            </div>
+            <div class="modal-main">
+                <table>
+                    <tr>
+                        <td>
+                            <p>Graph Background Color</p>
+                        </td>
+                        <td><input type="color" id="graph-background-color" value="${background}"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Graph Line Color</p>
+                        </td>
+                        <td><input type="color" value="${graph_line}" id="graph-line-color"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Graph Dot Color</p>
+                        </td>
+                        <td><input type="color" value="${graph_dot}" id="graph-dot-color"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Graph Dot Outline Color</p>
+                        </td>
+                        <td><input type="color" value="${graph_dot_outline}" id="graph-dot-outline-color"></td>
+                    </tr>
+
+
+
+                </table>
+                <button id="modal-close-button">Save and Close</button>
+            </div>
+    `
+
+    modal_content.innerHTML = modalInnerHTML
+    document.querySelector("#modal-close-button").addEventListener("click", closeSettingModal)
+
+}
+
+function closeSettingModal() {
+    console.log("close")
+    /**
+     * @type {HTMLDivElement}
+     */
+    let modal = document.querySelector("#modal")
+
+
+    let background = document.querySelector("#graph-background-color").value
+    let graph_line = document.querySelector("#graph-line-color").value
+    let graph_dot = document.querySelector("#graph-dot-color").value
+    let graph_dot_outline = document.querySelector("#graph-dot-outline-color").value
+
+
+
+    localStorage.setItem("graph-background", background)
+    localStorage.setItem("graph-line", graph_line)
+    localStorage.setItem("graph-dot", graph_dot)
+    localStorage.setItem("graph-dot-outline", graph_dot_outline)
+
+    modal.classList.add("hide")
+
+    if (selectedCoin) {
+        renderGraph(selectedCoin)
+
+    }
+}
+
+function bindModalButton() {
+    console.log("sett modal buttinb")
+    let button = document.querySelector("#gear")
+    button.addEventListener("click", renderSettingModal)
 }
 
 async function renderInfoBar(requestItem) {
@@ -246,52 +364,61 @@ async function renderInfoBar(requestItem) {
     console.log(h24_bucket)
 
 
+    let nameI = requestItem["name"]
+    let startDateI = startDate.toLocaleDateString("en-US")
+    let endDateI = endDate.toLocaleDateString("en-US")
+    let rankI = requestItem["rank"]
+    let rateI = parseFloat(requestItem["changePercent24Hr"]).toLocaleString(undefined, {
+        minimumFractionDigits: 4
+    })
+    let usdI = parseFloat(price.priceUsd)
+
     document.querySelector("#info-bar-placer").innerHTML = `
             <div class="info-bar flex-row">
                 <div class="info-bar-name flex-row">
                     <label>Name: </label>
-                    <output> ${requestItem["name"]}</output>
+                    <output> ${nameI}</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
 
                 </div>
                 <div class="info-bar-interval flex-row">
                     <label>Time Interval: </label>
-                    <output> 1 Day</output>
+                    <output>15 min Interval</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
 
                 </div>
                 <div class="info-bar-start-date flex-row">
                     <label>Start Date: </label>
-                    <output> ${startDate.toLocaleDateString("en-US")}</output>
+                    <output> ${startDateI}</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
 
                 </div>
                 <div class="info-bar-end-date flex-row">
                     <label>End Date: </label>
-                    <output> ${endDate.toLocaleDateString("en-US")}</output>
+                    <output> ${endDateI}</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
 
                 </div>
                 <div class="info-bar-rank flex-row">
                     <label>Rank: </label>
-                    <output> ${requestItem["rank"]}</output>
+                    <output> ${rankI}</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
 
                 </div>
                 <div class="info-bar-24-rate flex-row">
                     <label>24h Rate: </label>
-                    <output> ${parseFloat(requestItem["changePercent24Hr"]).toLocaleString(undefined,{minimumFractionDigits:4})}%</output>
+                    <output> ${rateI}%</output>
                     <section class="vertial-bar"></section>
                     <section class="vertial-bar"></section>
                 </div>
                 <div class="info-bar-usd flex-row">
                     <label>Price: </label>
-                    <output>$${parseFloat(price.priceUsd)}</output>
+                    <output>$${usdI}</output>
                 </div>
             </div>
             `
@@ -347,9 +474,10 @@ function populateSideBar(listDataRAW) {
         link.addEventListener("click", () => {
             initRenderMainContent().then(
                 renderInfoBar(element)
-            ).then(
+            ).then(() => {
+                selectedCoin = element.id;
                 renderGraph(element.id)
-            ).then(
+            }).then(
                 getMarkets(element.id, 10)
             )
 
@@ -368,6 +496,6 @@ function getDetails() {
 }
 
 let data = getAssets();
-
+bindModalButton()
 
 // populateSideBar(data.data)
